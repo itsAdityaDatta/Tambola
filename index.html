@@ -1,0 +1,223 @@
+<html>
+    <head>
+        <link href="https://fonts.googleapis.com/css?family=Abel|Bellota+Text&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Economica|Lobster+Two&display=swap" rel="stylesheet">
+        <script src="https://code.responsivevoice.org/responsivevoice.js?key=C2S8j6vR"></script>
+        <title>Tambola</title>
+        <style>
+            body{
+                margin: 0;
+            }
+
+            .heading{
+                width: 100%;
+                text-align: center;
+                color: white;
+                font-size: 66px;
+                font-family: 'Economica', sans-serif;
+                background-color: rgb(90, 0, 0);
+            }
+
+            #number{
+                font-size: 100px;
+                font-family: 'Economica', sans-serif;
+                text-align: center;
+                width: 100%;
+            }
+            .table{
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+                display: block;
+                font-family: 'Abel';
+                font-size: 26px;
+                border: 1px solid black;
+            }
+
+
+
+            #action{
+                font-size: 32px;
+                background-color: rgb(90, 0, 0);
+                color: white;
+                float: right;
+                width: 100%;
+                position: fixed;
+                bottom: 0px;
+                font-family: 'Abel';
+            }
+
+            #action:hover{
+                color: rgb(90, 0, 0);
+                border-top: 4px solid rgb(90, 0, 0);
+                background-color: white;
+                cursor: pointer;
+            }
+
+            #action:focus{
+                outline:none;
+            }
+
+
+            #timer{
+                position: fixed;
+                top: -2;
+                right: 0;
+                padding-right: 20px;
+                padding-left: 20px;
+                color: white;
+                border: 2px solid white;
+                font-size: 66px;
+                font-family: 'Economica', sans-serif;
+                background-color: rgb(90, 0, 0);
+            }
+
+        </style>
+       
+    </head>
+    <body onload="display()">
+        <div class="heading">Tambola</div>
+        <div id="timer">7</div> 
+        <br><br>
+        <div id='number'>00</div>
+        <br><br>
+            <div class='table' id='table0'></div>
+            <div class='table' id='table1'></div>
+            <div class='table' id='table2'></div>
+            <div class='table' id='table3'></div>
+            <div class='table' id='table4'></div>
+            <div class='table' id='table5'></div>
+            <div class='table' id='table6'></div>
+            <div class='table' id='table7'></div> 
+            <div class='table' id='table8'></div> 
+       
+        <button id='action'>Start / Pause</button>
+        <audio src="" hidden></audio>
+        <script>
+            let numbers = [];
+            let done = [];
+            let remaining = [];
+
+            for(let i=0;i<90;i++){
+                numbers[i] = i+1;
+                remaining[i] = i+1;
+            }
+
+            for(let i=0;i<9;i++){
+                numbers[i] = "0" + numbers[i];
+            }
+
+            let start = 0;
+            document.getElementById('action').addEventListener('click',()=>{
+                if(start == 0){
+                    start = 1;
+                    count = time/1000;
+                    timer();
+                    startGame();
+                }
+                else if(start == 1){
+                    pauseGame();
+                    start = 0;
+                }
+            });
+            let timerTime = null;
+            let startTime = null;
+            function pauseGame(){
+                clearInterval(timerTime);
+                clearTimeout(startTime);
+                document.getElementById('timer').innerHTML = 'PAUSED';
+            }
+
+            let time = 7000;
+            function startGame(){
+                startTime =   setTimeout(function(){
+                        game();
+                    },time);
+               
+            }
+            let count = time/1000;
+            function timer(){
+                timerTime = setInterval(function(){
+                    document.getElementById('timer').innerHTML = count-1;
+                    count--;
+                    if(count ==0){
+                        count = time/1000;
+                    }
+                },1000);
+                
+            }
+
+            function game(){
+                console.log('remaining length = ' + remaining.length);
+                console.log(remaining);
+                let random = getRandomInt(remaining.length);
+                console.log('random = ' + random);
+                numbers[remaining[random]-1] = 'XX';
+                document.getElementById('number').innerHTML = remaining[random];
+                let a = remaining[random];
+                let d = parseInt(a);
+                let b = a%10;
+                a = parseInt(a/10);
+                let c  = a%10;
+                if(c!= 0){
+                    responsiveVoice.speak(String(c) + "," + String(b) + "," + String(remaining[random]));
+                }
+                else{
+                    responsiveVoice.speak('single number, ' + String(remaining[random]));
+                }
+
+
+                done.push(remaining[random]);
+                remaining.splice(random,1);
+                display();
+                startGame();
+            }
+
+            function display(){
+                    document.getElementById('table0').innerHTML = '';
+                    document.getElementById('table1').innerHTML = '';
+                    document.getElementById('table2').innerHTML = '';
+                    document.getElementById('table3').innerHTML = '';
+                    document.getElementById('table4').innerHTML = '';
+                    document.getElementById('table5').innerHTML = '';
+                    document.getElementById('table6').innerHTML = '';
+                    document.getElementById('table7').innerHTML = '';
+                    document.getElementById('table8').innerHTML = '';
+
+                for(let i=0;i<10;i++){
+                    
+                    document.getElementById('table0').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=10;i<20;i++){
+                    document.getElementById('table1').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=20;i<30;i++){
+                    document.getElementById('table2').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=30;i<40;i++){
+                    document.getElementById('table3').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=40;i<50;i++){
+                    document.getElementById('table4').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=50;i<60;i++){
+                    document.getElementById('table5').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=60;i<70;i++){
+                    document.getElementById('table6').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=70;i<80;i++){
+                    document.getElementById('table7').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+                for(let i=80;i<90;i++){
+                    document.getElementById('table8').innerHTML += ' &nbsp|&nbsp&nbsp' + numbers[i];
+                }
+            }
+
+            function getRandomInt(max) {
+                return Math.floor(Math.random() * Math.floor(max));
+            }
+        
+        </script>
+    </body>
+</html>
